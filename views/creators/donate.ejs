@@ -1,0 +1,43 @@
+<%- layout('layouts/boilerplate.ejs') %>
+
+<h1>Donate to <%= creator.username %> </h1>
+
+<% if(currentUser.username !== creator.username) {%>
+
+<div>
+  <h2>
+    <a href="/payments/donate/<%= creator._id %>">
+      See all Donations made to <%= creator.username %>
+    </a>
+  </h2>
+</div>
+
+
+<form action="/payments/pay/<%= creator._id %>" method="POST" class="validated-form" novalidate>
+  <div class="mb-3">
+    <label for="currency" class="form-label">Choose Currency</label>
+    <select class="form-select" name="currency" id="currency" required>
+      <option disabled selected value>Select currency</option>
+      <option value="dollar">Dollars</option>
+      <option value="euro">Euros</option>
+      <option value="pount">Pounds</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="amount" class="form-label">Enter amount</label>
+    <input type="number" class="form-control" id="amount" name="amount" required>
+  </div>
+  <div class="mb-3">
+    <label for="name">Enter name(Optional): </label>
+    <input type="text" class="form-control" id="name" name="name">
+  </div>
+  <div class="mb-3">
+    <label for="message">Enter message(Optional): </label>
+    <input type="text" class="form-control" id="message" name="message">
+  </div>
+  <button class="btn btn-success">Donate</button>
+</form>
+
+<% } else {%>
+<h1>Cannot donate to self</h1>
+<% } %>

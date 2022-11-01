@@ -1,0 +1,7 @@
+<%- layout('layouts/boilerplate.ejs') %>
+
+<% for(let creator of allCreators) {%>
+<h3>
+  <a href="/payments/<%=creator._id %>"> <%= creator.username %> </a>
+</h3>
+<% } %>
