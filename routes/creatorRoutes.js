@@ -7,8 +7,6 @@ const catchAsync = require('../utils/catchAsync');
 // Models
 const Creator = require('../models/Creator');
 
-// Passport
-const passport = require('passport');
 
 // Creator controller
 const creators = require('../controllers/creators');
@@ -58,14 +56,7 @@ router
 router
   .route('/login')
   .get(creators.renderLogin)
-  .post(
-    passport.authenticate('local', {
-      failureFlash: true,
-      failureRedirect: '/login',
-      keepSessionInfo: true,
-    }),
-    catchAsync(creators.login)
-  );
+  .post(catchAsync(creators.login));
 
 router.get('/logout', creators.logout);
 

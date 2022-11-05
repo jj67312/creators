@@ -10,7 +10,7 @@ module.exports.renderDonate = async (req, res) => {
 module.exports.donate = async (req, res) => {
   const { amount, currency, message, name } = req.body;
   const receiverId = req.params.id;
-  const senderId = req.user._id;
+  const senderId = req.session.user_id;
 
   const receiverCreator = await Creator.findById(receiverId);
   const senderCreator = await Creator.findById(senderId);
@@ -46,7 +46,7 @@ module.exports.donate = async (req, res) => {
 
 // find donations made by the current creator to any another creator:
 module.exports.findDonation = async (req, res) => {
-  const currCreator = await Creator.findById(req.user._id);
+  const currCreator = await Creator.findById(req.session.user_id);
   const targetCreator = await Creator.findById(req.params.id);
   // find all donations from currCreator to targetCreator:
   let allDonationsToTarget = await Payment.find({

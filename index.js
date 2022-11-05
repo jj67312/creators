@@ -21,10 +21,6 @@ const session = require('express-session');
 // flash
 const flash = require('connect-flash');
 
-// passport for authentication
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
-
 // telling express that we will be using ejsMate instead of the default one
 app.engine('ejs', ejsMate);
 
@@ -57,40 +53,26 @@ main()
     console.log('Connection to mongoDB failed!');
   });
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/duckcartDB');
+  await mongoose.connect('mongodb://localhost:27017/duckcartDB2');
 }
 
-const secret = process.env.secret || 'thisshouldbeabettersecret';
-
 // express-session settings
-const sessionConfig = {
-  name: 'session',
-  secret,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    httpOnly: true,
-    // secure: true,
-    expires: Date.now() * 1000 * 60 * 60 * 24 * 7,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  },
-};
-app.use(session(sessionConfig));
+app.use(
+  session({ secret: 'thisisasecret', saveUninitialized: true, resave: true })
+);
 
 // setting up flash:
 app.use(flash());
-
-// setting up passport:
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy(Creator.authenticate()));
-passport.serializeUser(Creator.serializeUser());
-passport.deserializeUser(Creator.deserializeUser());
+let currentUser;
+app.use(async (req, res, next) => {
+  currentUser = await Creator.findById(req.session.user_id);
+  next();
+});
 
 // Middleware for flash:
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   // console.log(req.query);
-  res.locals.currentUser = req.user;
+  res.locals.currentUser = currentUser;
   res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
